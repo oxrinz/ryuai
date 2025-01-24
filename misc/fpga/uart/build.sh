@@ -1,6 +1,6 @@
 rm -f top.json top.asc top.bin 
 
-yosys -p "synth_ice40 -top top -json top.json" src/top.v
+yosys -p "synth_ice40 -top top -json top.json" src/*.sv
 
 nextpnr-ice40 --hx1k --package vq100 \
     --json top.json \
