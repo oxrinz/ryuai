@@ -1,3 +1,6 @@
 **/*.asc
 **/top.json
 **/*.bin
+
+**/*.zig-cache
+.git

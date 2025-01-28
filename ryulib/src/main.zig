@@ -1,4 +1,6 @@
 const std = @import("std");
+const tensor = @import("tensor.zig");
+const cpu = @import("backends/cpu_device.zig");
 
 extern fn cudaMalloc(ptr: *?*anyopaque, size: usize) c_int;
 extern fn cudaMemcpy(dest: *anyopaque, src: *const anyopaque, size: usize, kind: c_int) c_int;
@@ -52,4 +54,16 @@ export fn add(a: i32, b: i32) i32 {
     _ = cudaFree(d_c.?);
 
     return result;
+}
+
+export fn hello() void {
+    const tentype = tensor.Tensor(cpu.CpuInterface);
+    var ten = tentype.init();
+    ten.hello();
+}
+
+test "main" {
+    std.debug.print("AHWHAG\n", .{});
+    var ten2 = tensor.Tensor(cpu.CpuInterface);
+    ten2.hello();
 }

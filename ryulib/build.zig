@@ -28,11 +28,29 @@ pub fn build(b: *std.Build) void {
         .dest_dir = .{ .override = .{ .custom = "." } },
     });
     b.getInstallStep().dependOn(&install.step);
+
+    const main_tests = b.addTest(.{
+        .root_source_file = .{ .cwd_relative = "src/main.zig" },
+        .target = target,
+        .optimize = optimize,
+    });
+
+    main_tests.addObjectFile(.{ .cwd_relative = cuda_obj });
+    main_tests.addIncludePath(.{ .cwd_relative = b.fmt("{s}/include", .{cuda_path}) });
+    main_tests.addLibraryPath(.{ .cwd_relative = b.fmt("{s}/lib64", .{cuda_path}) });
+    main_tests.linkSystemLibrary("cuda");
+    main_tests.linkSystemLibrary("cudart");
+    main_tests.linkLibC();
+
+    const run_main_tests = b.addRunArtifact(main_tests);
+
+    const test_step = b.step("test", "Run library tests");
+    test_step.dependOn(&run_main_tests.step);
 }
 
 fn compileCuda(b: *std.Build) []const u8 {
-    const source_path = b.pathJoin(&.{ "src", "cuda", "add.cu" });
-    const target_path = b.pathJoin(&.{ "src", "cuda", "cuda.o" });
+    const source_path = b.pathJoin(&.{ "src", "backends", "cuda", "root.cu" });
+    const target_path = b.pathJoin(&.{ "src", "backends", "cuda", "cuda.o" });
 
     const cc_path = std.process.getEnvVarOwned(b.allocator, "CC") catch |err| {
         std.log.err("Failed to get CC environment variable: {}", .{err});

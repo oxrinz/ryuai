@@ -1,0 +1,9 @@
+# ISA
+
+## Instruction format
+
+0-3 OPCODE (4)
+4-6 RD (3)
+7-9 RS (3)
+10-15 FUNCT (6)
+16-31 IMM (16)

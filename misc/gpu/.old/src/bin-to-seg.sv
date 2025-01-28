@@ -1,4 +1,4 @@
-module Binary_To_7Segment (
+module bin_to_seg (
     input        i_Clk,
     input  [3:0] i_Binary_Num,
     output       o_Segment_A,
